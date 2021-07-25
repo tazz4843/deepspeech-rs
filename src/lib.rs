@@ -126,7 +126,7 @@ macro_rules! impl_model {
             /// The input buffer must consist of mono 16-bit samples.
             /// The sample rate is not freely chooseable but a property
             /// of the model files.
-            pub fn speech_to_text(&mut self, buffer: &[i16]) -> Result<String, DeepspeechError> {
+            pub fn speech_to_text(&self, buffer: &[i16]) -> Result<String, DeepspeechError> {
                 let r = unsafe {
                     let ptr = do_call!(
                         &self.library,
@@ -156,7 +156,7 @@ macro_rules! impl_model {
             /// `CandidateTranscript`s to return. The actually returned number
             /// might be smaller.
             pub fn speech_to_text_with_metadata(
-                &mut self,
+                &self,
                 buffer: &[i16],
                 num_transcripts: u16,
             ) -> Result<Metadata, DeepspeechError> {
