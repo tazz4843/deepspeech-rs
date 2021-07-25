@@ -38,6 +38,12 @@ macro_rules! impl_model {
                 }
             }
         }
+
+        // these two impls SHOULD be safe according to a thread on the DeepSpeech Discourse
+        // https://discourse.mozilla.org/t/is-deepspeech-nativeclient-thread-safe/38801
+        unsafe impl Send for Model {}
+        unsafe impl Sync for Model {}
+
         impl Model {
             /// Set hyperparameters alpha and beta of the external scorer
             pub fn set_scorer_alpha_beta(
@@ -197,6 +203,11 @@ macro_rules! impl_stream {
             library: Library,
             stream: *mut ds::StreamingState,
         }
+
+        // forcing Send + Sync is NOT safe on a StreamingState* according to reuben
+        // on the DeepSpeech Discourse
+        // https://discourse.mozilla.org/t/is-deepspeech-nativeclient-thread-safe/38801
+
         impl Stream {
             /// Feed audio samples to the stream
             ///
@@ -305,6 +316,12 @@ macro_rules! impl_metadata {
             library: Library,
             metadata: *mut ds::Metadata,
         }
+
+        // these two impls SHOULD be safe according to a thread on the DeepSpeech Discourse
+        // https://discourse.mozilla.org/t/is-deepspeech-nativeclient-thread-safe/38801
+        unsafe impl Send for Metadata {}
+        unsafe impl Sync for Metadata {}
+
         impl Drop for Metadata {
             fn drop(&mut self) {
                 unsafe {
@@ -334,6 +351,12 @@ macro_rules! impl_token_metadata {
         pub struct TokenMetadata {
             metadata_item: ds::TokenMetadata,
         }
+
+        // these two impls SHOULD be safe according to a thread on the DeepSpeech Discourse
+        // https://discourse.mozilla.org/t/is-deepspeech-nativeclient-thread-safe/38801
+        unsafe impl Send for TokenMetadata {}
+        unsafe impl Sync for TokenMetadata {}
+
         impl TokenMetadata {
             /// The text of the token generated for transcription
             pub fn text(&self) -> Result<&str, std::str::Utf8Error> {
@@ -362,6 +385,12 @@ macro_rules! impl_candidate_transcript {
         pub struct CandidateTranscript {
             transcript_item: ds::CandidateTranscript,
         }
+
+        // these two impls SHOULD be safe according to a thread on the DeepSpeech Discourse
+        // https://discourse.mozilla.org/t/is-deepspeech-nativeclient-thread-safe/38801
+        unsafe impl Send for CandidateTranscript {}
+        unsafe impl Sync for CandidateTranscript {}
+
         impl CandidateTranscript {
             pub fn tokens(&self) -> &[TokenMetadata] {
                 unsafe {
